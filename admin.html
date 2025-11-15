@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Nataloé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sage-green: #87A96B;
+            --warm-beige: #F5F1E8;
+            --deep-forest: #2D5016;
+            --charcoal: #2C2C2C;
+            --cream-white: #FEFCF8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream-white);
+            color: var(--charcoal);
+        }
+
+        .font-display { font-family: 'Playfair Display', serif; }
+        .bg-sage { background-color: var(--sage-green); }
+        .bg-beige { background-color: var(--warm-beige); }
+        .bg-forest { background-color: var(--deep-forest); }
+        .text-sage { color: var(--sage-green); }
+        .text-forest { color: var(--deep-forest); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-lg border border-sage/10 w-full max-w-md">
+            <div class="text-center mb-6">
+                <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-12 mx-auto mb-4">
+                <h1 class="font-display text-2xl font-bold text-forest">Administration</h1>
+            </div>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-forest mb-2">Nom d'utilisateur</label>
+                    <input type="text" id="username" class="w-full px-3 py-2 border border-sage/20 rounded-lg focus:outline-none focus:border-sage" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-forest mb-2">Mot de passe</label>
+                    <input type="password" id="password" class="w-full px-3 py-2 border border-sage/20 rounded-lg focus:outline-none focus:border-sage" required>
+                </div>
+                <button type="submit" class="w-full bg-sage text-white py-2 px-4 rounded-lg hover:bg-forest transition-colors font-medium">
+                    Se connecter
+                </button>
+            </form>
+            <div id="login-error" class="mt-4 text-red-600 text-sm hidden"></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden min-h-screen bg-beige/30">
+        <!-- Header -->
+        <nav class="bg-white shadow-sm border-b border-sage/20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-10 w-auto">
+                        <span class="ml-3 font-display text-xl font-bold text-forest">Administration</span>
+                    </div>
+                    <button id="logout-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Tabs -->
+            <div class="mb-8">
+                <nav class="flex space-x-8">
+                    <button class="tab-btn active bg-sage text-white px-4 py-2 rounded-lg" data-tab="products">Produits</button>
+                    <button class="tab-btn bg-beige text-forest px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors" data-tab="ingredients">Ingrédients</button>
+                    <button class="tab-btn bg-beige text-forest px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors" data-tab="testimonials">Témoignages</button>
+                    <button class="tab-btn bg-beige text-forest px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors" data-tab="blog">Blog</button>
+                    <button class="tab-btn bg-beige text-forest px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors" data-tab="content">Contenu</button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tab-content">
+                <!-- Products Tab -->
+                <div id="products-tab" class="tab-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display text-3xl font-bold text-forest">Gestion des Produits</h2>
+                        <button id="add-product-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                            Ajouter un produit
+                        </button>
+                    </div>
+                    <div id="products-list" class="grid gap-4"></div>
+                </div>
+
+                <!-- Ingredients Tab -->
+                <div id="ingredients-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display text-3xl font-bold text-forest">Gestion des Ingrédients</h2>
+                        <button id="add-ingredient-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                            Ajouter un ingrédient
+                        </button>
+                    </div>
+                    <div id="ingredients-list" class="grid gap-4"></div>
+                </div>
+
+                <!-- Testimonials Tab -->
+                <div id="testimonials-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display text-3xl font-bold text-forest">Gestion des Témoignages</h2>
+                        <button id="add-testimonial-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                            Ajouter un témoignage
+                        </button>
+                    </div>
+                    <div id="testimonials-list" class="grid gap-4"></div>
+                </div>
+
+                <!-- Blog Tab -->
+                <div id="blog-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display text-3xl font-bold text-forest">Gestion du Blog</h2>
+                        <button id="add-blog-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                            Ajouter un article
+                        </button>
+                    </div>
+                    <div id="blog-list" class="grid gap-4"></div>
+                </div>
+
+                <!-- Content Tab -->
+                <div id="content-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-display text-3xl font-bold text-forest">Gestion du Contenu</h2>
+                        <button id="add-content-btn" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">
+                            Ajouter une section
+                        </button>
+                    </div>
+                    <div id="content-list" class="grid gap-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-display text-2xl font-bold text-forest" id="product-modal-title">Ajouter un Produit</h3>
+                <button class="close-modal text-forest hover:text-sage">&times;</button>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-forest mb-2">Nom</label>
+                        <input type="text" id="product-name" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-forest mb-2">Prix (€)</label>
+                        <input type="number" step="0.01" id="product-price" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-forest mb-2">Description courte</label>
+                    <input type="text" id="product-short-desc" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-forest mb-2">Description complète</label>
+                    <textarea id="product-desc" rows="3" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-forest mb-2">Catégorie</label>
+                        <select id="product-category" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required>
+                            <option value="serum">Sérum</option>
+                            <option value="cleanser">Nettoyant</option>
+                            <option value="cream">Crème</option>
+                            <option value="treatment">Traitement</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-forest mb-2">URL de l'image</label>
+                        <input type="url" id="product-image" class="w-full px-3 py-2 border border-sage/20 rounded-lg" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-forest mb-2">Avantages (un par ligne)</label>
+                    <textarea id="product-benefits" rows="3" class="w-full px-3 py-2 border border-sage/20 rounded-lg" placeholder="Avantage 1&#10;Avantage 2&#10;Avantage 3"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="close-modal px-4 py-2 border border-sage text-sage rounded-lg hover:bg-sage hover:text-white transition-colors">Annuler</button>
+                    <button type="submit" class="bg-sage text-white px-4 py-2 rounded-lg hover:bg-forest transition-colors">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Similar modals for other entities would go here -->
+
+    <script>
+        // Configuration
+        const API_BASE = 'https://your-worker-url.workers.dev'; // Replace with your worker URL
+        let authToken = localStorage.getItem('authToken');
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Initialize
+        if (authToken) {
+            showDashboard();
+        } else {
+            showLogin();
+        }
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    showDashboard();
+                } else {
+                    loginError.textContent = data.error;
+                    loginError.classList.remove('hidden');
+                }
+            } catch (error) {
+                loginError.textContent = 'Erreur de connexion';
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            showLogin();
+        });
+
+        // Tab switching
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-sage', 'text-white');
+                    b.classList.add('bg-beige', 'text-forest');
+                });
+                btn.classList.add('active', 'bg-sage', 'text-white');
+                btn.classList.remove('bg-beige', 'text-forest');
+
+                const tabName = btn.dataset.tab;
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+
+                loadTabData(tabName);
+            });
+        });
+
+        // Load data for tabs
+        async function loadTabData(tabName) {
+            try {
+                const response = await fetch(`${API_BASE}/api/${tabName}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+
+                if (tabName === 'products') {
+                    displayProducts(data);
+                } else if (tabName === 'ingredients') {
+                    displayIngredients(data);
+                } else if (tabName === 'testimonials') {
+                    displayTestimonials(data);
+                } else if (tabName === 'blog-posts') {
+                    displayBlogPosts(data);
+                } else if (tabName === 'content-sections') {
+                    displayContentSections(data);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Display functions
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            container.innerHTML = products.map(product => `
+                <div class="bg-white p-4 rounded-lg shadow border border-sage/10">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-forest">${product.name}</h3>
+                            <p class="text-sage font-bold">${product.price}€</p>
+                            <p class="text-sm text-forest/70">${product.short_description}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-product bg-sage text-white px-3 py-1 rounded text-sm hover:bg-forest" data-id="${product.id}">Modifier</button>
+                            <button class="delete-product bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700" data-id="${product.id}">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add event listeners
+            document.querySelectorAll('.edit-product').forEach(btn => {
+                btn.addEventListener('click', (e) => editProduct(e.target.dataset.id));
+            });
+            document.querySelectorAll('.delete-product').forEach(btn => {
+                btn.addEventListener('click', (e) => deleteProduct(e.target.dataset.id));
+            });
+        }
+
+        // Similar display functions for other entities...
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.modal').style.display = 'none';
+            });
+        });
+
+        // Add product button
+        document.getElementById('add-product-btn').addEventListener('click', () => {
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-form').reset();
+            document.getElementById('product-modal-title').textContent = 'Ajouter un Produit';
+            showModal('product-modal');
+        });
+
+        // Product form submission
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const productData = {
+                name: formData.get('product-name'),
+                price: parseFloat(formData.get('product-price')),
+                short_description: formData.get('product-short-desc'),
+                description: formData.get('product-desc'),
+                category: formData.get('product-category'),
+                image_url: formData.get('product-image'),
+                benefits: formData.get('product-benefits').split('\n').filter(b => b.trim())
+            };
+
+            const productId = document.getElementById('product-id').value;
+            const method = productId ? 'PUT' : 'POST';
+            const url = productId ? `${API_BASE}/api/products/${productId}` : `${API_BASE}/api/products`;
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    hideModal('product-modal');
+                    loadTabData('products');
+                } else {
+                    alert('Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
+        });
+
+        // Helper functions
+        function showLogin() {
+            loginScreen.classList.remove('hidden');
+            adminDashboard.classList.add('hidden');
+        }
+
+        function showDashboard() {
+            loginScreen.classList.add('hidden');
+            adminDashboard.classList.remove('hidden');
+            loadTabData('products'); // Load default tab
+        }
+
+        // Initialize on load
+        loadTabData('products');
+    </script>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Produits - Nataloé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sage-green: #87A96B;
+            --warm-beige: #F5F1E8;
+            --deep-forest: #2D5016;
+            --charcoal: #2C2C2C;
+            --cream-white: #FEFCF8;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream-white);
+            color: var(--charcoal);
+        }
+        
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-accent { font-family: 'Crimson Text', serif; }
+        
+        .bg-sage { background-color: var(--sage-green); }
+        .bg-beige { background-color: var(--warm-beige); }
+        .bg-forest { background-color: var(--deep-forest); }
+        .text-sage { color: var(--sage-green); }
+        .text-forest { color: var(--deep-forest); }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(135, 169, 107, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-sage/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-10 w-auto">
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-forest hover:text-sage font-medium">Accueil</a>
+                        <a href="products.html" class="text-sage font-medium">Produits</a>
+                        <a href="ingredients.html" class="text-forest hover:text-sage font-medium">Ingrédients</a>
+                        <a href="about.html" class="text-forest hover:text-sage font-medium">À propos</a>
+                        <a href="index.html#faq" class="text-forest hover:text-sage font-medium">FAQ</a>
+                        <a href="index.html#blog" class="text-forest hover:text-sage font-medium">Blog</a>
+                        <a href="index.html#contact" class="text-forest hover:text-sage font-medium">Contact</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex space-x-3">
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.222.083.343-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z.017 0z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <button class="bg-sage text-white px-6 py-2 rounded-full hover:bg-forest transition-colors font-medium">
+                        Boutique
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="pt-24 pb-12 bg-beige/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-display text-4xl md:text-6xl font-bold text-forest mb-6">
+                Nos Produits
+            </h1>
+            <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                Découvrez notre gamme complète de soins bio, formulés avec les meilleurs ingrédients naturels et validés scientifiquement.
+            </p>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Product Filter -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="filter-btn active bg-sage text-white px-6 py-3 rounded-full font-medium" data-filter="all">
+                    Tous les produits
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="cleanser">
+                    Nettoyants
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="serum">
+                    Sérums
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="cream">
+                    Crèmes
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="treatment">
+                    Traitements
+                </button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
+                <!-- Vitamin C Serum -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="serum">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-vitamin-c.jpg" alt="Sérum Vitamine C+E" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Sérum Vitamine C+E</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Protège et éclaircit la peau avec une formulation antioxydante puissante. Réduit les taches pigmentaires et illumine le teint. Formulé avec 15% de vitamine C pure et vitamine E pour une protection optimale contre les radicaux libres.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Réduit les taches pigmentaires</li>
+                        <li>• Illumine et unifie le teint</li>
+                        <li>• Protection antioxydante</li>
+                        <li>• Convient à tous les types de peau</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">49€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Charcoal Cleanser -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cleanser">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-charcoal.jpg" alt="Gel Nettoyant Charbon" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Gel Nettoyant Charbon</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Purifie et matifie les peaux grasses avec du charbon activé. Élimine les impuretés et resserre les pores. Formulation douce sans savon pour un nettoyage en profondeur sans agresser la peau.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Purifie en profondeur</li>
+                        <li>• Matifie et resserre les pores</li>
+                        <li>• Convient aux peaux grasses</li>
+                        <li>• Sans savon, sans agression</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">32€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Caviar Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cream">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-caviar.jpg" alt="Crème Caviar" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Caviar</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Favorise le rajeunissement de la peau avec des extraits de caviar riches en nutriments. Anti-âge premium avec acide hyaluronique et peptides pour une action raffermissante immédiate et durable.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Action anti-âge premium</li>
+                        <li>• Rajeunit et raffermit</li>
+                        <li>• Riche en nutriments</li>
+                        <li>• Peptides et acide hyaluronique</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">89€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Baobab Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cream">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-baobab.jpg" alt="Crème Baobab" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Baobab</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Nourrit intensément les peaux sèches avec l'huile de baobab bio. Hydratation 24h et protection naturelle. Enrichie en oméga-3 et vitamines pour une peau souple et éclatante.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Hydratation 24h</li>
+                        <li>• Nourriture intense</li>
+                        <li>• Huile de baobab bio</li>
+                        <li>• Riche en oméga-3</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">45€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Snake Active Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="treatment">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-snake.jpg" alt="Crème Snake Active" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Snake Active</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Revitalise et atténue les rides avec des peptides innovants. Effet lissant et raffermissant visible. Formule avancée inspirée des venins de serpent pour une action botox-like naturelle.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Effet botox-like naturel</li>
+                        <li>• Lisse et raffermit</li>
+                        <li>• Peptides innovants</li>
+                        <li>• Action anti-rides ciblée</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">76€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Anti-Acne Serum -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="serum">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-acne.jpg" alt="Sérum Anti-Acné" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Sérum Anti-Acné</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Régule le sébum et combat les imperfections avec des actifs purifiants. Peau nette et équilibrée. Formulation avec acide salicylique et niacinamide pour une action anti-bactérienne efficace.
+                    </p>
+                    <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                        <li>• Régule le sébum</li>
+                        <li>• Combat les imperfections</li>
+                        <li>• Acide salicylique + Niacinamide</li>
+                        <li>• Peau nette et équilibrée</li>
+                    </ul>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">42€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-forest text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-12 w-auto mb-6 brightness-0 invert">
+                    <p class="text-white/80 mb-6 leading-relaxed">
+                        Des soins bio, validés par la science. Nataloé allie nature et recherche scientifique pour des résultats visibles sur votre peau.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-display text-lg font-semibold mb-4">Contact</h3>
+                    <div class="space-y-3 text-white/80">
+                        <p>123 Rue de la Beauté<br>75001 Paris, France</p>
+                        <p>Tél: +33 1 23 45 67 89</p>
+                        <p>Email: hello@nataloe.com</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-display text-lg font-semibold mb-4">Liens rapides</h3>
+                    <div class="space-y-2">
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">CGU</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Politique de confidentialité</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Livraison & Retours</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Mentions légales</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/20 mt-12 pt-8 text-center text-white/60">
+                <p>&copy; 2024 Nataloé. Tous droits réservés. Fabriqué avec ❤️ en France.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://your-worker-url.workers.dev'; // Replace with your worker URL
+
+        // Fetch and populate products
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/products`);
+                const products = await response.json();
+
+                const productsGrid = document.getElementById('products-grid');
+                if (productsGrid) {
+                    productsGrid.innerHTML = products.map(product => `
+                        <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="${product.category}">
+                            <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                                <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-display text-2xl font-semibold text-forest mb-3">${product.name}</h3>
+                            <p class="text-forest/70 mb-4 leading-relaxed">${product.short_description}</p>
+                            <ul class="text-sm text-forest/60 mb-4 space-y-1">
+                                ${JSON.parse(product.benefits || '[]').map(benefit => `<li>• ${benefit}</li>`).join('')}
+                            </ul>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-sage">${product.price}€</span>
+                                <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Product filtering
+        function setupFiltering() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+
+                    // Update active button
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('active', 'bg-sage', 'text-white');
+                        btn.classList.add('bg-beige', 'text-forest');
+                    });
+                    this.classList.add('active', 'bg-sage', 'text-white');
+                    this.classList.remove('bg-beige', 'text-forest');
+
+                    // Filter products
+                    const productCards = document.querySelectorAll('.product-card');
+                    productCards.forEach(card => {
+                        const category = card.getAttribute('data-category');
+                        if (filter === 'all' || category === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // Add to cart functionality
+        function setupAddToCart() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart')) {
+                    e.preventDefault();
+
+                    // Animation feedback
+                    const originalText = e.target.textContent;
+                    e.target.textContent = 'Ajouté !';
+                    e.target.style.backgroundColor = '#2D5016';
+
+                    setTimeout(() => {
+                        e.target.textContent = originalText;
+                        e.target.style.backgroundColor = '';
+                    }, 1500);
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            setupFiltering();
+            setupAddToCart();
+        });
+    </script>
+</body>
+</html>

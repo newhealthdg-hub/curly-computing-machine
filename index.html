@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nataloé - Des soins bio, validés par la science</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <style>
+        :root {
+            --sage-green: #87A96B;
+            --warm-beige: #F5F1E8;
+            --deep-forest: #2D5016;
+            --charcoal: #2C2C2C;
+            --cream-white: #FEFCF8;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream-white);
+            color: var(--charcoal);
+        }
+        
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-accent { font-family: 'Crimson Text', serif; }
+        
+        .bg-sage { background-color: var(--sage-green); }
+        .bg-beige { background-color: var(--warm-beige); }
+        .bg-forest { background-color: var(--deep-forest); }
+        .text-sage { color: var(--sage-green); }
+        .text-forest { color: var(--deep-forest); }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(135, 169, 107, 0.1) 0%, rgba(245, 241, 232, 0.3) 100%);
+        }
+        
+        .organic-shape {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(135, 169, 107, 0.2);
+        }
+        
+        .ingredient-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .ingredient-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+        
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--sage-green);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(135, 169, 107, 0.2);
+        }
+        
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            background-color: rgba(135, 169, 107, 0.05);
+        }
+        
+        .blog-card {
+            transition: all 0.3s ease;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-sage/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-10 w-auto">
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#accueil" class="nav-link text-forest hover:text-sage font-medium">Accueil</a>
+                        <a href="#produits" class="nav-link text-forest hover:text-sage font-medium">Produits</a>
+                        <a href="#ingredients" class="nav-link text-forest hover:text-sage font-medium">Ingrédients</a>
+                        <a href="#apropos" class="nav-link text-forest hover:text-sage font-medium">À propos</a>
+                        <a href="#faq" class="nav-link text-forest hover:text-sage font-medium">FAQ</a>
+                        <a href="#blog" class="nav-link text-forest hover:text-sage font-medium">Blog</a>
+                        <a href="#contact" class="nav-link text-forest hover:text-sage font-medium">Contact</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex space-x-3">
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.222.083.343-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z.017 0z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-sage hover:text-forest transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <button class="bg-sage text-white px-6 py-2 rounded-full hover:bg-forest transition-colors font-medium">
+                        Boutique
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="particles-canvas"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-br from-sage/10 via-transparent to-beige/30"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="scroll-reveal">
+                <h1 class="font-display text-5xl md:text-7xl font-bold text-forest mb-6 leading-tight">
+                    La force de la nature
+                    <span class="block text-sage">au service de votre peau</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-forest/80 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Des soins bio, validés par la science. Découvrez nos formulations naturelles élaborées en partenariat avec des experts en esthétique médicalisée.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button class="bg-sage text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-forest transition-all transform hover:scale-105 shadow-lg">
+                        Découvrir nos produits
+                    </button>
+                    <button class="border-2 border-sage text-sage px-8 py-4 rounded-full text-lg font-semibold hover:bg-sage hover:text-white transition-all">
+                        Notre histoire
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Brand Story Section -->
+    <section id="apropos" class="py-20 bg-beige/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scroll-reveal">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                        L'histoire de Nataloé
+                    </h2>
+                    <p class="text-lg text-forest/80 mb-6 leading-relaxed">
+                        Fondée en partenariat avec le laboratoire Body Esthetic Laboratoire à Barcelone, Nataloé allie l'expertise en esthétique médicalisée à la puissance des ingrédients naturels. Notre mission : offrir des soins bio, cliniquement prouvés et fabriqués selon les standards les plus élevés.
+                    </p>
+                    <p class="text-lg text-forest/80 mb-8 leading-relaxed">
+                        Chaque formulation est le résultat de recherches scientifiques rigoureuses, combinée à une sélection rigoureuse d'ingrédients biologiques. Nous croyons en la synergie parfaite entre nature et science pour des résultats visibles sur votre peau.
+                    </p>
+                    <button class="bg-sage text-white px-6 py-3 rounded-full font-semibold hover:bg-forest transition-colors">
+                        Découvrir nos valeurs
+                    </button>
+                </div>
+                <div class="scroll-reveal">
+                    <img src="resources/lab-team.jpg" alt="Équipe du laboratoire Nataloé" class="rounded-2xl shadow-2xl organic-shape">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="produits" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Nos soins signatures
+                </h2>
+                <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                    Des formulations uniques combinant les meilleurs actifs naturels pour des résultats visibles et durables.
+                </p>
+            </div>
+
+            <!-- Product Filter -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 scroll-reveal">
+                <button class="filter-btn active bg-sage text-white px-6 py-3 rounded-full font-medium" data-filter="all">
+                    Tous les produits
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="cleanser">
+                    Nettoyants
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="serum">
+                    Sérums
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="cream">
+                    Crèmes
+                </button>
+                <button class="filter-btn bg-beige text-forest px-6 py-3 rounded-full font-medium hover:bg-sage hover:text-white transition-colors" data-filter="treatment">
+                    Traitements
+                </button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
+                <!-- Vitamin C Serum -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="serum">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-vitamin-c.jpg" alt="Sérum Vitamine C+E" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Sérum Vitamine C+E</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Protège et éclaircit la peau avec une formulation antioxydante puissante. Réduit les taches pigmentaires et illumine le teint.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">49€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Charcoal Cleanser -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cleanser">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-charcoal.jpg" alt="Gel Nettoyant Charbon" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Gel Nettoyant Charbon</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Purifie et matifie les peaux grasses avec du charbon activé. Élimine les impuretés et resserre les pores.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">32€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Caviar Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cream">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-caviar.jpg" alt="Crème Caviar" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Caviar</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Favorise le rajeunissement de la peau avec des extraits de caviar riches en nutriments. Anti-âge premium.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">89€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Baobab Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="cream">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-baobab.jpg" alt="Crème Baobab" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Baobab</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Nourrit intensément les peaux sèches avec l'huile de baobab bio. Hydratation 24h et protection naturelle.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">45€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Snake Active Cream -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="treatment">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-snake.jpg" alt="Crème Snake Active" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Crème Snake Active</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Revitalise et atténue les rides avec des peptides innovants. Effet lissant et raffermissant visible.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">76€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Anti-Acne Serum -->
+                <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="serum">
+                    <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                        <img src="resources/product-acne.jpg" alt="Sérum Anti-Acné" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-forest mb-3">Sérum Anti-Acné</h3>
+                    <p class="text-forest/70 mb-4 leading-relaxed">
+                        Régule le sébum et combat les imperfections avec des actifs purifiants. Peau nette et équilibrée.
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-sage">42€</span>
+                        <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ingredients Section -->
+    <section id="ingredients" class="py-20 bg-beige/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Nos ingrédients stars
+                </h2>
+                <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                    Des actifs naturels soigneusement sélectionnés pour leurs propriétés scientifiquement prouvées.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Snail Secretion -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Bave d'Escargot</h3>
+                    <p class="text-forest/70 text-sm">Hydratation intense, régénération cellulaire, cicatrisation</p>
+                </div>
+
+                <!-- Aloe Vera -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Aloe Vera</h3>
+                    <p class="text-forest/70 text-sm">Apaisement, hydratation, protection contre les agressions extérieures</p>
+                </div>
+
+                <!-- Hyaluronic Acid -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Acide Hyaluronique</h3>
+                    <p class="text-forest/70 text-sm">Fermeté, repulpant, anti-âge préventif et correcteur</p>
+                </div>
+
+                <!-- Vitamin C -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l2.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Vitamine C</h3>
+                    <p class="text-forest/70 text-sm">Éclaircissement, protection antioxydante, éclat du teint</p>
+                </div>
+
+                <!-- Collagen -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Collagène</h3>
+                    <p class="text-forest/70 text-sm">Régénération, élasticité, réduction des rides et ridules</p>
+                </div>
+
+                <!-- Essential Oils -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Huiles Essentielles</h3>
+                    <p class="text-forest/70 text-sm">Vitalité, aromathérapie, propriétés thérapeutiques ciblées</p>
+                </div>
+
+                <!-- Kojic Acid -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Acide Kojique</h3>
+                    <p class="text-forest/70 text-sm">Éclaircissement, uniformisation du teint, action anti-taches</p>
+                </div>
+
+                <!-- Royal Jelly -->
+                <div class="ingredient-icon text-center scroll-reveal">
+                    <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                        <svg class="w-10 h-10 text-sage" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-2">Gelée Royale</h3>
+                    <p class="text-forest/70 text-sm">Nutrition profonde, revitalisation, propriétés régénérantes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Nos certifications
+                </h2>
+                <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                    Des standards de qualité rigoureux pour votre sécurité et votre confiance.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center scroll-reveal">
+                    <div class="w-32 h-32 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-sage">EcoCert</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">Certification Bio</h3>
+                    <p class="text-forest/70">Nos produits sont certifiés bio par EcoCert, garantissant des ingrédients naturels et durables.</p>
+                </div>
+
+                <div class="text-center scroll-reveal">
+                    <div class="w-32 h-32 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-sage">Cruelty-Free</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">Non testé sur les animaux</h3>
+                    <p class="text-forest/70">Engagement éthique fort : aucun test sur animaux, pour une beauté responsable.</p>
+                </div>
+
+                <div class="text-center scroll-reveal">
+                    <div class="w-32 h-32 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-sage">OMS</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">Standards OMS</h3>
+                    <p class="text-forest/70">Fabrication selon les conventions de l'OMS, sans parabènes ni huiles minérales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-beige/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Ce que disent nos clientes
+                </h2>
+                <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                    Des résultats visibles, des peaux transformées, des cliente satisfaites.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card rounded-2xl p-6 scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" alt="Sophie M." class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-forest">Sophie M.</h4>
+                            <div class="flex text-sage">
+                                <span>★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-forest/80 font-accent italic">
+                        "Le sérum vitamine C a transformé ma peau. Mon teint est plus lumineux, mes taches ont fondu. Je suis conquise !"
+                    </p>
+                </div>
+
+                <div class="testimonial-card rounded-2xl p-6 scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" alt="Marie L." class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-forest">Marie L.</h4>
+                            <div class="flex text-sage">
+                                <span>★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-forest/80 font-accent italic">
+                        "La crème au baobab est un vrai baume pour ma peau sèche. Enfin une hydratation qui doute toute la journée !"
+                    </p>
+                </div>
+
+                <div class="testimonial-card rounded-2xl p-6 scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face" alt="Claire D." class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-forest">Claire D.</h4>
+                            <div class="flex text-sage">
+                                <span>★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-forest/80 font-accent italic">
+                        "J'ai enfin trouvé des produits qui respectent ma peau sensible tout en étant efficaces. Merci Nataloé !"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Questions fréquentes
+                </h2>
+                <p class="text-xl text-forest/80">
+                    Tout ce que vous voulez savoir sur nos produits et leur utilisation.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="faq-item bg-white rounded-2xl p-6 shadow-lg border border-sage/10 scroll-reveal">
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                        Comment choisir le bon produit pour mon type de peau ?
+                    </h3>
+                    <p class="text-forest/80 leading-relaxed">
+                        Chaque produit Nataloé est formulé pour des besoins spécifiques. Pour les peaux sèches, privilégiez la crème au baobab. Pour les peaux matures, le sérum vitamine C et la crème caviar sont idéaux. Notre équipe est disponible pour vous conseiller personnellement.
+                    </p>
+                </div>
+
+                <div class="faq-item bg-white rounded-2xl p-6 shadow-lg border border-sage/10 scroll-reveal">
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                        Nos produits conviennent-ils aux peaux sensibles ?
+                    </h3>
+                    <p class="text-forest/80 leading-relaxed">
+                        Absolument ! Tous nos formulations sont testées dermatologiquement et sont sans parabènes, sans huiles minérales et avec des ingrédients naturels doux. Nous avons même des clientes avec des peaux très sensibles qui adorent nos produits.
+                    </p>
+                </div>
+
+                <div class="faq-item bg-white rounded-2xl p-6 shadow-lg border border-sage/10 scroll-reveal">
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                        Sont-ils fabriqués en France ?
+                    </h3>
+                    <p class="text-forest/80 leading-relaxed">
+                        Oui, tous nos produits sont fabriqués en France dans notre laboratoire partenaire à Barcelone, selon les standards les plus stricts de l'industrie cosmétique européenne. Cela garantit qualité et traçabilité optimales.
+                    </p>
+                </div>
+
+                <div class="faq-item bg-white rounded-2xl p-6 shadow-lg border border-sage/10 scroll-reveal">
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                        Quand puis-je espérer voir des résultats ?
+                    </h3>
+                    <p class="text-forest/80 leading-relaxed">
+                        Les résultats varient selon les produits et les peaux. Généralement, vous remarquerez une amélioration de l'hydratation dès la première semaine. Pour les actions anti-âge et éclaircissantes, comptez 4 à 6 semaines d'utilisation régulière.
+                    </p>
+                </div>
+
+                <div class="faq-item bg-white rounded-2xl p-6 shadow-lg border border-sage/10 scroll-reveal">
+                    <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                        Puis-je utiliser plusieurs produits en même temps ?
+                    </h3>
+                    <p class="text-forest/80 leading-relaxed">
+                        Oui, nos produits sont conçus pour être complémentaires. Nous recommandons une routine matin et soir avec nettoyage, sérum puis crème. Notre équipe peut vous aider à créer la routine parfaite pour vos besoins spécifiques.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-20 bg-beige/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-forest mb-6">
+                    Blog & Actualités
+                </h2>
+                <p class="text-xl text-forest/80 max-w-3xl mx-auto">
+                    Conseils de beauté, découvertes scientifiques et actualités de la marque.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <article class="blog-card bg-white rounded-2xl overflow-hidden shadow-lg border border-sage/10 scroll-reveal">
+                    <div class="aspect-video bg-sage/20"></div>
+                    <div class="p-6">
+                        <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                            Les bienfaits de la bave d'escargot en cosmétique
+                        </h3>
+                        <p class="text-forest/70 mb-4">
+                            Découvrez pourquoi cette ingrédient naturel est si efficace pour la régénération cutanée et l'hydratation.
+                        </p>
+                        <a href="#" class="text-sage hover:text-forest font-semibold">
+                            Lire l'article →
+                        </a>
+                    </div>
+                </article>
+
+                <article class="blog-card bg-white rounded-2xl overflow-hidden shadow-lg border border-sage/10 scroll-reveal">
+                    <div class="aspect-video bg-sage/20"></div>
+                    <div class="p-6">
+                        <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                            Routine skincare du matin : nos conseils experts
+                        </h3>
+                        <p class="text-forest/70 mb-4">
+                            Apprenez à établir une routine matinale efficace pour protéger et nourrir votre peau toute la journée.
+                        </p>
+                        <a href="#" class="text-sage hover:text-forest font-semibold">
+                            Lire l'article →
+                        </a>
+                    </div>
+                </article>
+
+                <article class="blog-card bg-white rounded-2xl overflow-hidden shadow-lg border border-sage/10 scroll-reveal">
+                    <div class="aspect-video bg-sage/20"></div>
+                    <div class="p-6">
+                        <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                            Nouveau partenariat avec des dermatologues espagnols
+                        </h3>
+                        <p class="text-forest/70 mb-4">
+                            Nataloé renforce ses partenariats scientifiques pour encore plus d'innovation dans vos soins.
+                        </p>
+                        <a href="#" class="text-sage hover:text-forest font-semibold">
+                            Lire l'article →
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-forest text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <img src="resources/nataloe-logo.png" alt="Nataloé" class="h-12 w-auto mb-6 brightness-0 invert">
+                    <p class="text-white/80 mb-6 leading-relaxed">
+                        Des soins bio, validés par la science. Nataloé allie nature et recherche scientifique pour des résultats visibles sur votre peau.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white/80 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white/80 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.222.083.343-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z.017 0z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-white/80 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-display text-lg font-semibold mb-4">Contact</h3>
+                    <div class="space-y-3 text-white/80">
+                        <p>123 Rue de la Beauté<br>75001 Paris, France</p>
+                        <p>Tél: +33 1 23 45 67 89</p>
+                        <p>Email: hello@nataloe.com</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-display text-lg font-semibold mb-4">Newsletter</h3>
+                    <p class="text-white/80 mb-4">Recevez nos conseils beauté et offres exclusives.</p>
+                    <form class="space-y-3">
+                        <input type="email" placeholder="Votre email" class="w-full px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-sage">
+                        <button type="submit" class="w-full bg-sage text-white py-2 rounded-full hover:bg-white hover:text-forest transition-colors font-semibold">
+                            S'inscrire
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 class="font-display text-lg font-semibold mb-4">Liens rapides</h3>
+                    <div class="space-y-2">
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">CGU</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Politique de confidentialité</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Livraison & Retours</a>
+                        <a href="#" class="block text-white/80 hover:text-white transition-colors">Mentions légales</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/20 mt-12 pt-8 text-center text-white/60">
+                <p>&copy; 2024 Nataloé. Tous droits réservés. Fabriqué avec ❤️ en France.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://your-worker-url.workers.dev'; // Replace with your worker URL
+
+        // Fetch and populate products
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/products`);
+                const products = await response.json();
+
+                const productsGrid = document.getElementById('products-grid');
+                if (productsGrid) {
+                    productsGrid.innerHTML = products.map(product => `
+                        <div class="product-card bg-white rounded-2xl p-6 shadow-lg border border-sage/10" data-category="${product.category}">
+                            <div class="aspect-square mb-6 overflow-hidden rounded-xl">
+                                <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-display text-2xl font-semibold text-forest mb-3">${product.name}</h3>
+                            <p class="text-forest/70 mb-4 leading-relaxed">${product.short_description}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-sage">${product.price}€</span>
+                                <button class="add-to-cart bg-sage text-white px-4 py-2 rounded-full hover:bg-forest transition-colors">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Fetch and populate ingredients
+        async function loadIngredients() {
+            try {
+                const response = await fetch(`${API_BASE}/api/ingredients`);
+                const ingredients = await response.json();
+
+                const ingredientsGrid = document.querySelector('#ingredients .grid');
+                if (ingredientsGrid) {
+                    ingredientsGrid.innerHTML = ingredients.map(ingredient => `
+                        <div class="ingredient-icon text-center scroll-reveal">
+                            <div class="w-20 h-20 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 organic-shape">
+                                ${ingredient.icon_svg}
+                            </div>
+                            <h3 class="font-display text-xl font-semibold text-forest mb-2">${ingredient.name}</h3>
+                            <p class="text-forest/70 text-sm">${ingredient.description}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading ingredients:', error);
+            }
+        }
+
+        // Fetch and populate testimonials
+        async function loadTestimonials() {
+            try {
+                const response = await fetch(`${API_BASE}/api/testimonials`);
+                const testimonials = await response.json();
+
+                const testimonialsGrid = document.querySelector('#testimonials .grid');
+                if (testimonialsGrid) {
+                    testimonialsGrid.innerHTML = testimonials.map(testimonial => `
+                        <div class="testimonial-card rounded-2xl p-6 scroll-reveal">
+                            <div class="flex items-center mb-4">
+                                <img src="${testimonial.image_url}" alt="${testimonial.customer_name}" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-forest">${testimonial.customer_name}</h4>
+                                    <div class="flex text-sage">
+                                        ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-forest/80 font-accent italic">
+                                "${testimonial.review}"
+                            </p>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+            }
+        }
+
+        // Fetch and populate blog posts
+        async function loadBlogPosts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/blog-posts`);
+                const posts = await response.json();
+
+                const blogGrid = document.querySelector('#blog .grid');
+                if (blogGrid) {
+                    blogGrid.innerHTML = posts.map(post => `
+                        <article class="blog-card bg-white rounded-2xl overflow-hidden shadow-lg border border-sage/10 scroll-reveal">
+                            <div class="aspect-video bg-sage/20"></div>
+                            <div class="p-6">
+                                <h3 class="font-display text-xl font-semibold text-forest mb-3">
+                                    ${post.title}
+                                </h3>
+                                <p class="text-forest/70 mb-4">
+                                    ${post.excerpt}
+                                </p>
+                                <a href="#" class="text-sage hover:text-forest font-semibold">
+                                    Lire l'article →
+                                </a>
+                            </div>
+                        </article>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading blog posts:', error);
+            }
+        }
+
+        // Load all dynamic content
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            loadIngredients();
+            loadTestimonials();
+            loadBlogPosts();
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
